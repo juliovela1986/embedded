@@ -1,0 +1,9 @@
+databaseChangeLog:
+   - includeAll:
+       path: classpath*:db/changes_create/
+   - includeAll:
+       path: classpath*:db/changes_insert/
+#   - includeAll:
+#       path: classpath*:db/testchanges/
+
+
