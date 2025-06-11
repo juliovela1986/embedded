@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-insert-pruebas
+      author: jvelade_
+      failOnError: true
+      comment: "Inserción de texto de prueba en la tabla pruebas"
+      changes:
+        - insert:
+            tableName: pruebas
+            columns:
+              - column:
+                  name: description
+                  value: "Hola Mundo"
+              - column:
+                  name: is_default
+                  valueBoolean: true
+              - column:
+                  name: active
+                  valueBoolean: true
+              - column:
+                  name: created_by
+                  value: 1865504
+              - column:
+                  name: created_instant
+                  valueComputed: CURRENT_TIMESTAMP(0)
+              - column:
+                  name: modified_by
+                  value: 1865504
+              - column:
+                  name: modified_instant
+                  valueComputed: CURRENT_TIMESTAMP(0)
