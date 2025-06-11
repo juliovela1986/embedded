@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-pruebas
+      author: jvelade_
+      failOnError: true
+      comment: "Creación de la tabla pruebas"
+      changes:
+        - createTable:
+            tableName: pruebas
+            columns:
+              - column:
+                  name: id_prueba
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_default
+                  type: BOOLEAN
+                  defaultValue: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_instant
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modified_by
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: modified_instant
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  defaultValue: true
+        - sql:
+            dbms: postgresql
+            splitStatements: true
+            stripComments: false
+            sql: |
+              COMMENT ON COLUMN pruebas.id IS 'Indica el indice de la tabla pruebas';
+              COMMENT ON COLUMN pruebas.description IS 'Indica la descripción que vamos a añadir a la tabla pruebas';

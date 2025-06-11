@@ -31,11 +31,22 @@
 		<spring.profiles.active>test</spring.profiles.active>
 		<maven.version>3.9.9</maven.version>
 		<liquibase-sessionlock.version>1.6.9</liquibase-sessionlock.version>
+		<mapstruct.version>1.6.3</mapstruct.version>
+		<springdoc-openapi.version>2.8.8</springdoc-openapi.version>
+		<nimbus.version>10.0.2</nimbus.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -52,6 +63,17 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- INI: Auditoria tablas historicas -->
+		<!-- ################################ -->
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-envers</artifactId>
+		</dependency>
+
+		<!-- FIN: Auditoria tablas historicas -->
+		<!-- ################################ -->
 		<!-- INI: Dependencias para test unitarios -->
 		<!-- ##################################### -->
 		<dependency>
@@ -72,15 +94,62 @@
 			<scope>test</scope>
 		</dependency>
 
-
 		<!-- FIN: Dependencias para test unitarios -->
 		<!-- ##################################### -->
 
+
+		<!-- INI: Dependencias para trabajar con MapStruct -->
+		<!-- ############################################# -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
-			<version>1.6.3</version>
+			<version>${mapstruct.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+
+		<!-- Fin: Dependencias para trabajar con MapStruct -->
+		<!-- ############################################# -->
+
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc-openapi.version}</version>
+		</dependency>
+
+		<!-- ### INI: Dependencia para validar token key cloack con llave
+            publica ### -->
+		<!--
+            ######################################################################## -->
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>${nimbus.version}</version>
+		</dependency>
+
+		<!-- ### FIN: Dependencia para validar token key cloack con llavepublica
+            ### -->
+		<!--
+            ####################################################################### -->
+
+		<!--  INI: Depencencia cache -->
+		<!--  ###################### -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+		<!--  FIN: Depencencia cache -->
+		<!--  ###################### -->
 
 		<dependency>
 			<groupId>org.liquibase</groupId>
@@ -92,6 +161,49 @@
 			<artifactId>liquibase-sessionlock</artifactId>
 			<version>${liquibase-sessionlock.version}</version>
 		</dependency>
+
+		<!-- INI: Spring boot Starter Validation -->
+		<!-- ################### -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<!-- FIN: Spring boot Starter Validation -->
+		<!-- ################### -->
+
+
+		<!-- INI: Embedded Postgres -->
+		<!-- ################### -->
+		<dependency>
+			<groupId>io.zonky.test</groupId>
+			<artifactId>embedded-database-spring-test</artifactId>
+			<version>2.6.0</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.zonky.test</groupId>
+			<artifactId>embedded-postgres</artifactId>
+			<version>2.1.0</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- FIN: Embedded Postgres -->
+		<!-- ################### -->
+
+		<!-- INI: Export Excel -->
+		<!-- ################### -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.4.1</version></dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.4.1</version>
+		</dependency>
+		<!-- FIN: Export Excel -->
+		<!-- ################### -->
 	</dependencies>
 
 	<build>
@@ -100,81 +212,46 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-mapstruct-binding</artifactId>
+							<version>0.2.0</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
-				<configuration>
-					<systemPropertyVariables>
-						<spring.profiles.active>${spring.profiles.active}</spring.profiles.active>
-					</systemPropertyVariables>
-				</configuration>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.13</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<!-- Perfil para tests, ej.: usando Base de Datos embebida -->
-		<profile>
-			<id>test</id>
-			<activation>
-				<!-- Este perfil se activa manualmente con -Ptest -->
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<spring.profiles.active>test</spring.profiles.active>
-				<!-- Otras propiedades específicas para el test -->
-			</properties>
-			<dependencies>
-				<!-- Dependencias específicas para test, por ejemplo Embedded PostgreSQL -->
-				<dependency>
-					<groupId>io.zonky.test</groupId>
-					<artifactId>embedded-postgres</artifactId>
-					<version>2.1.0</version>
-					<scope>test</scope>
-				</dependency>
-				<!-- Otras dependencias necesarias sólo en test -->
-			</dependencies>
-			<build>
-				<plugins>
-					<!-- Configuración específica para test (plugins o configuraciones personalizadas) -->
-				</plugins>
-			</build>
-		</profile>
-
-		<!-- Perfil para desarrollo -->
-		<profile>
-			<id>dev</id>
-			<activation>
-				<!-- Activación manual, o puedes definir activación por propiedades o sistema operativo -->
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<spring.profiles.active>dev</spring.profiles.active>
-				<!-- Propiedades de conexión, variables de entorno, etc. -->
-			</properties>
-			<!-- Puedes incluir dependencias o plugins diferentes si lo necesitas -->
-		</profile>
-	</profiles>
-
 </project>
